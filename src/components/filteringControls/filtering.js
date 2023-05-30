@@ -24,7 +24,7 @@ function FilteringControls({ actualizarDataTabla }) {
     const [formData, setFormData] = useState({
         name: '',
         priority: '',
-        state: ''
+        isDone: ''
     });
     const cambiarInput = (event) => {
         const { name, value } = event.target;
@@ -35,7 +35,27 @@ function FilteringControls({ actualizarDataTabla }) {
     }
     const manejoEnvio = (event) => {
         event.preventDefault();
-        console.log(formData);
+        let filters = {
+            "page": 1
+        }
+        for(let data in formData){
+            let datum = formData[data];
+            console.log(data);
+            if(datum !== null && datum !== ""){
+                filters[data] = datum;
+            }
+        }
+        axios.get('http://localhost:8080/todos', { params: filters })
+            .then(response => {
+                const toDoArray = response.data.map(todoData => {
+                    const todo = new ToDoModel(todoData.uuid, todoData.text, todoData.dueDate, todoData.done, todoData.priority, todoData.creationDate)
+                    return todo
+                });
+                actualizarDataTabla(toDoArray)
+            })
+            .catch(error => {
+                console.error('Error al obtener los datos:', error);
+            });
     }
     return (
         <Form onSubmit={manejoEnvio}>
@@ -64,9 +84,9 @@ function FilteringControls({ actualizarDataTabla }) {
                                 onChange={cambiarInput}
                             >
                                 <option value="" disabled hidden>All, High, Medium, Low</option>
-                                <option value="h">High</option>
-                                <option value="m">Medium</option>
-                                <option value="l">Low</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
                             </Form.Control>
                             <div
                                 className="position-absolute top-0 end-0 bottom-0 d-flex align-items-center px-4"
@@ -82,13 +102,13 @@ function FilteringControls({ actualizarDataTabla }) {
                             <Form.Control
                                 as="select"
                                 type="text"
-                                name="state"
-                                value={formData.state}
+                                name="isDone"
+                                value={formData.isDone}
                                 onChange={cambiarInput}
                             >
                                 <option value="" disabled hidden>All, Done, Undone</option>
-                                <option value="d">Done</option>
-                                <option value="u">Undone</option>
+                                <option value="Done">Done</option>
+                                <option value="Undone">Undone</option>
                             </Form.Control>
                             <div
                                 className="position-absolute top-0 end-0 bottom-0 d-flex align-items-center px-4"

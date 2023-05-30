@@ -15,8 +15,6 @@ function App() {
 
   const actualizarDataTabla = (nuevaData) => { setDataTabla(nuevaData); }
 
-
-
   const handleCloseModal = () => {
     setModalVisible(false);
   };
@@ -29,7 +27,7 @@ function App() {
         </div>
         <Button variant='secondary' className='my-3' onClick={handleShowModal}>+New To Do</Button>
         <ToDoModal show={modalVisible} onHide={handleCloseModal}></ToDoModal>
-        <ToDoTable dataTabla={dataTabla} />
+        <ToDoTable dataTabla={dataTabla} actualizarDataTabla={actualizarDataTabla} />
       </Container>
       <p>Aqui van las metricas</p>
     </Container>

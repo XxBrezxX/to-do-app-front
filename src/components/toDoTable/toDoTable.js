@@ -3,7 +3,7 @@ import './toDoTable.css'
 import { useState } from "react";
 import ReactPaginate from 'react-paginate';
 
-const ToDoTable = ({dataTabla}) => {
+const ToDoTable = ({dataTabla, actualizarDataTabla}) => {
     const properties = [
         "Checkbox",
         "Name",
@@ -11,6 +11,12 @@ const ToDoTable = ({dataTabla}) => {
         "Due Date<>",
         "Actions"
     ];
+
+    const [formData, setFormData] = useState({
+        dueDateSort: false,
+        prioritySort: false,
+    });
+
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 5;
 
