@@ -70,3 +70,11 @@
 .pagination-item:hover a {
     background-color: #eaeaea;
 }
+
+.button-no-padding {
+    padding: 0;
+}
+
+.button-no-margin {
+    margin: 0;
+}

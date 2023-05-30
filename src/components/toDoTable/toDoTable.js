@@ -1,32 +1,56 @@
-import { Container, Form, Table } from "react-bootstrap";
+import { Button, Container, Form, Table } from "react-bootstrap";
 import './toDoTable.css'
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ReactPaginate from 'react-paginate';
+import { FormDataContext } from "../../utils/FormDataContext";
 
-const ToDoTable = ({dataTabla, actualizarDataTabla}) => {
+const ToDoTable = ({ dataTabla, actualizarDataTabla }) => {
     const properties = [
         "Checkbox",
         "Name",
-        "Priority<>",
-        "Due Date<>",
+        "Priority",
+        "Due Date",
         "Actions"
     ];
 
-    const [formData, setFormData] = useState({
-        dueDateSort: false,
-        prioritySort: false,
-    });
+    const [formData, setFormData] = useContext(FormDataContext);
+    const [sortOrderA, setSortOrderA] = useState('up');
+    const [sortOrderB, setSortOrderB] = useState('up');
+
+    const handleClickA = () => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            prioritySort: sortOrderA === 'up' ? false : true,
+        }));
+        setSortOrderA(sortOrderA === 'up' ? 'down' : 'up');
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            prioritySort: sortOrderA === 'up' ? false : true,
+        }));
+        console.log(formData);
+    };
+
+    const handleClickB = () => {
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            dueDateSort: sortOrderB === 'up' ? false : true,
+        }));
+        setSortOrderB(sortOrderB === 'up' ? 'down' : 'up');
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            dueDateSort: sortOrderB === 'up' ? false : true,
+        }));
+
+        console.log(formData);
+    };
 
     const [currentPage, setCurrentPage] = useState(0);
     const itemsPerPage = 5;
-
     const pageCount = Math.ceil(dataTabla.length / itemsPerPage);
-
     const handlePageChange = (selectedPage) => {
         console.log(selectedPage.selected)
         setCurrentPage(selectedPage.selected);
     }
-
     const offset = currentPage * itemsPerPage;
     const currentPageData = dataTabla.slice(offset, offset + itemsPerPage);
 
@@ -39,12 +63,20 @@ const ToDoTable = ({dataTabla, actualizarDataTabla}) => {
                             {properties.map((item, index) => (
                                 <th key={index}>
                                     {
-                                        item !== "Checkbox" ?
-                                            item :
+                                        item === "Checkbox" ?
                                             <Form.Check
                                                 type="checkbox"
                                                 className="custom-disabled-checkbox"
-                                            />
+                                            /> :
+                                            item === "Priority" ?
+                                                <Button variant='secondary' className="button-no-padding button-no-margin" onClick={handleClickA}>
+                                                    Priority {sortOrderA === 'up' ? 'Up' : 'Down'}
+                                                </Button > :
+                                                item === "Due Date" ?
+                                                    <Button variant='secondary' className="button-no-padding button-no-margin" onClick={handleClickB}>
+                                                        Due Date {sortOrderB === 'up' ? 'Up' : 'Down'}
+                                                    </Button > :
+                                                    item
                                     }
                                 </th>
                             ))}

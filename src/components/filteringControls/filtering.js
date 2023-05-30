@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Col, Container, Form, FormControl, Row } from "react-bootstrap";
 import { BsCaretDownFill } from 'react-icons/bs';
 import { ToDoModel } from "../../models/toDo";
 import axios from 'axios';
+import { FormDataContext } from "../../utils/FormDataContext";
 
 function FilteringControls({ actualizarDataTabla }) {
 
     useEffect(() => {
         axios.get('http://localhost:8080/todos', { params: { "page": 1 } })
             .then(response => {
-                console.log(response.data);
                 const toDoArray = response.data.map(todoData => {
                     const todo = new ToDoModel(todoData.uuid, todoData.text, todoData.dueDate, todoData.done, todoData.priority, todoData.creationDate)
                     return todo
@@ -21,11 +21,7 @@ function FilteringControls({ actualizarDataTabla }) {
             });
     }, []);
 
-    const [formData, setFormData] = useState({
-        name: '',
-        priority: '',
-        isDone: ''
-    });
+    const [formData, setFormData] = useContext(FormDataContext);
     const cambiarInput = (event) => {
         const { name, value } = event.target;
         setFormData((prevFormData) => ({
@@ -40,7 +36,6 @@ function FilteringControls({ actualizarDataTabla }) {
         }
         for(let data in formData){
             let datum = formData[data];
-            console.log(data);
             if(datum !== null && datum !== ""){
                 filters[data] = datum;
             }
