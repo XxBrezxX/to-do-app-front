@@ -3,6 +3,7 @@ import './toDoTable.css'
 import { useContext, useState } from "react";
 import ReactPaginate from 'react-paginate';
 import { FormDataContext } from "../../utils/FormDataContext";
+import ToDoModalUpdate from "../updateModal/updateModal";
 
 const ToDoTable = ({ dataTabla, actualizarDataTabla }) => {
     const properties = [
@@ -16,6 +17,8 @@ const ToDoTable = ({ dataTabla, actualizarDataTabla }) => {
     const [formData, setFormData] = useContext(FormDataContext);
     const [sortOrderA, setSortOrderA] = useState('up');
     const [sortOrderB, setSortOrderB] = useState('up');
+    const [modalOpen, setModalOpen] = useState(false);
+    const [itemToRender, setItemToRender] = useState(null);
 
     const handleClickA = () => {
         setFormData((prevFormData) => ({
@@ -42,6 +45,17 @@ const ToDoTable = ({ dataTabla, actualizarDataTabla }) => {
         }));
 
         console.log(formData);
+    };
+    const openModal = (item) => {
+        setItemToRender(item);
+        setModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalOpen(false);
+    };
+    const handleDelete = () => {
+
     };
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -106,10 +120,21 @@ const ToDoTable = ({ dataTabla, actualizarDataTabla }) => {
                                     })()}
                                 </td>
                                 <td>
-                                    {toDoClass.dueDate.toString()}
+                                    {toDoClass.dueDate == null ? "---" : toDoClass.dueDate.toString()}
                                 </td>
                                 <td>
-                                    Edit / Delete
+                                    <Button
+                                        onClick={() => openModal(toDoClass)}
+                                        variant='secondary'
+                                        className="button-no-padding button-no-margin mx-1" >
+                                        Edit
+                                    </Button >
+                                    {modalOpen && (
+                                        <ToDoModalUpdate show={modalOpen} onHide={closeModal} data={itemToRender}> </ToDoModalUpdate>
+                                    )}
+                                    <Button variant='secondary' className="button-no-padding button-no-margin mx-1" onClick={handleDelete}>
+                                        Delete
+                                    </Button >
                                 </td>
                             </tr>
                         ))}

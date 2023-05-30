@@ -5,12 +5,15 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { BsCaretDownFill } from "react-icons/bs";
 
-function ToDoModal({ show, onHide }) {
+function ToDoModalUpdate({ show, onHide, data }) {
 
     const [formData, setFormData] = useState({
-        text: '',
-        dueDate: '',
-        priority: '',
+        uuid: data.id,
+        text: data._text,
+        dueDate: data.dueDate == null ? '' : new Date(data.dueDate[0], data.dueDate[1] - 1, data.dueDate[2]),
+        creationDate: new Date(data._creationDate[0], data._creationDate[1] - 1, data._creationDate[2]),
+        isDone: data._doneFlag,
+        priority: data._priority
     });
     const cambiarInput = (event) => {
         const { name, value } = event.target;
@@ -27,22 +30,23 @@ function ToDoModal({ show, onHide }) {
     };
     const manejoEnvio = (event) => {
         event.preventDefault();
-        const date = new Date();
-        setFormData((prevData) => ({
-            ...prevData,
-            creationDate: date
-        }));
-        formData['creationDate'] = date;
-        axios.post('http://localhost:8080/todos', formData)
-        .then(response => {
-          console.log('Todo creado:', response.data);
-          // Aquí puedes realizar acciones adicionales después de crear el todo
-          window.location.reload();
-        })
-        .catch(error => {
-          console.error('Error al crear el todo:', error);
-          // Aquí puedes manejar el error de alguna manera
-        });
+        console.log(formData);
+        axios.put(`http://localhost:8080/todos/${data.id}`, formData)
+            .then(response => {
+                // Manejar la respuesta exitosa
+                console.log(response.data);
+                window.location.reload();
+            })
+            .catch(error => {
+                // Manejar el error
+                console.error('Error al actualizar los datos:', error);
+            });
+        // const date = new Date();
+        // setFormData((prevData) => ({
+        //     ...prevData,
+        //     creationDate: date
+        // }));
+        // formData['creationDate'] = date;
     }
     return (
         <Modal show={show} onHide={onHide}>
@@ -108,4 +112,4 @@ function ToDoModal({ show, onHide }) {
     );
 }
 
-export default ToDoModal;
+export default ToDoModalUpdate;
